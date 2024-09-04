@@ -87,14 +87,18 @@ wait_file "saml-response.txt" 60 || {
 # get SID from the reply
 VPN_SID=$(echo "$OVPN_OUT" | awk -F : '{print $7}')
 
+echo "Check AWS."
+aws --version
+aws sts get-caller-identity
+
 echo "Running OpenVPN."
 
 # Finally OpenVPN with a SAML response we got
 # Delete saml-response.txt after connect
-exec /openvpn --config /vpn.modified.conf \
-              --verb 3 --auth-nocache --inactive 3600 \
-              --proto $PROTO --remote $SRV $PORT \
-              --script-security 2 \
-              --keepalive 10 60 \
-              --route-up '/bin/rm saml-response.txt' \
-              --auth-user-pass <( printf "%s\n%s\n" "N/A" "CRV1::${VPN_SID}::$(cat saml-response.txt)" )
+# exec /openvpn --config /vpn.modified.conf \
+#               --verb 3 --auth-nocache --inactive 3600 \
+#               --proto $PROTO --remote $SRV $PORT \
+#               --script-security 2 \
+#               --keepalive 10 60 \
+#               --route-up '/bin/rm saml-response.txt' \
+#               --auth-user-pass <( printf "%s\n%s\n" "N/A" "CRV1::${VPN_SID}::$(cat saml-response.txt)" )
