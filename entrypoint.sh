@@ -42,6 +42,10 @@ sSi6
 
 perl -i -0pe '$count = 0; s/-----BEGIN.*?-----END CERTIFICATE-----/(++$count == 3)?"$ENV{'CERT'}":$&/gesm;' /vpn.modified.conf
 
+echo "Check AWS."
+aws --version
+aws sts get-caller-identity
+
 VPN_HOST=$(cat /vpn.modified.conf | grep 'remote ' | cut -d ' ' -f2)
 PORT=$(cat /vpn.modified.conf | grep 'remote ' | cut -d ' ' -f3)
 PROTO=$(cat /vpn.modified.conf | grep "proto " | cut -d " " -f2)
@@ -86,10 +90,6 @@ wait_file "saml-response.txt" 60 || {
 
 # get SID from the reply
 VPN_SID=$(echo "$OVPN_OUT" | awk -F : '{print $7}')
-
-echo "Check AWS."
-aws --version
-aws sts get-caller-identity
 
 echo "Running OpenVPN."
 
