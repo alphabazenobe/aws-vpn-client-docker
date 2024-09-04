@@ -13,6 +13,7 @@ RUN apt-get update && \
     unzip \
     build-essential \
     autoconf \
+    golang-go \
     libgnutls28-dev \
     libgnutls28-dev \
     liblzo2-dev \
@@ -48,6 +49,9 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN apt-get update && \
     apt-get install -y \
+    awscli \
+    curl \
+    golang-go \
     dnsutils \
     liblzo2-dev \
     openssl \
