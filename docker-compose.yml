@@ -1,7 +1,8 @@
 version: "3.0"
 services:
   vpn-client:
-    image: rdvencioneck/aws-vpn-client
+    build:
+      context: .
     environment:
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
@@ -11,8 +12,9 @@ services:
     restart: "no"
     volumes:
       - "./vpn.conf:/vpn.conf:rw"
-      - "/etc/timezone:/etc/timezone:ro"
-      - "/etc/localtime:/etc/localtime:ro"
+      # Error response from daemon: failed to create task for container: failed to create shim task: OCI runtime create failed: runc create failed: unable to start container process: error during container init: error mounting "/host_mnt/private/var/db/timezone/tz/2024a.1.0/zoneinfo/Europe/London" to rootfs at "/etc/localtime": mount /host_mnt/private/var/db/timezone/tz/2024a.1.0/zoneinfo/Europe/London:/etc/localtime (via /proc/self/fd/9), flags: 0x5001: not a directory: unknown: Are you trying to mount a directory onto a file (or vice-versa)? Check if the specified host path exists and is the expected type
+      # - "/etc/timezone:/etc/timezone:ro"
+      # - "/etc/localtime:/etc/localtime:ro"
       - "/etc/resolv.conf:/etc/resolv.conf:rw"
     devices:
       - "/dev/net/tun:/dev/net/tun"
