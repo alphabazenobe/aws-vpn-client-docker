@@ -2,6 +2,10 @@ version: "3.0"
 services:
   vpn-client:
     image: rdvencioneck/aws-vpn-client
+    environment:
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_SESSION_TOKEN: ${AWS_SESSION_TOKEN}  # Optional, for temporary credentials
     container_name: aws-vpn-client
     network_mode: "host"
     restart: "no"
