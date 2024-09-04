@@ -1,11 +1,14 @@
 FROM ubuntu:20.04 as builder
 
+ARG DEBIAN_FRONTEND=noninteractive
+ENV TZ=Etc/UTC
 ARG openvpn_version="2.5.1"
 
 WORKDIR /
 
 RUN apt-get update && \
     apt-get install -y \
+    awscli \
     curl \
     unzip \
     build-essential \
@@ -41,7 +44,6 @@ RUN go build server.go
 
 FROM ubuntu:20.04
 
-ENV TZ="America/Sao_Paulo"
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN apt-get update && \
