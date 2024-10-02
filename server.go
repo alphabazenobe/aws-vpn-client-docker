@@ -11,11 +11,16 @@ import (
 func main() {
 	http.HandleFunc("/", SAMLServer)
 	log.Printf("Starting HTTP server at 127.0.0.1:35001")
-	http.ListenAndServe("127.0.0.1:35001", nil)
+	http.ListenAndServe("0.0.0.0:35001", nil)  // binds to all interfaces
+
 }
 
 func SAMLServer(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
+	case "GET":
+		fmt.Fprintf(w, "GET Method requested!")
+		log.Printf("GET Method requested!")
+		return
 	case "POST":
 		if err := r.ParseForm(); err != nil {
 			fmt.Fprintf(w, "ParseForm() err: %v", err)
