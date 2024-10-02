@@ -62,15 +62,18 @@ wait_file() {
 RAND=$(openssl rand -hex 12)
 
 # resolv manually hostname to IP, as we have to keep persistent ip address
-SRV=$(dig a +short "${RAND}.${VPN_HOST}"|head -n1)
+NS_LOOKUP="nslookup ${RAND}.${VPN_HOST}"
+IP_ADDRESS=$(${NS_LOOKUP} | grep 'Address: ' | head -n 1 | cut -d ' ' -f2)
+echo "IP_ADDRESS = ${IP_ADDRESS}"
+
 sed -i '/^remote .*$/d' /vpn.modified.conf
 sed -i '/^remote-random-hostname.*$/d' /vpn.modified.conf
 
 # cleanup
 rm -f saml-response.txt
-echo "Getting SAML redirect URL from the AUTH_FAILED response (host: ${SRV}:${PORT})..."
+echo "Getting SAML redirect URL from the AUTH_FAILED response (host: ${IP_ADDRESS}:${PORT})..."
 OVPN_OUT=$(/openvpn --config /vpn.modified.conf --verb 3 \
-     --proto "$PROTO" --remote "${SRV}" "${PORT}" \
+     --proto "$PROTO" --remote "${IP_ADDRESS}" "${PORT}" \
      --auth-user-pass <( printf "%s\n%s\n" "N/A" "ACS::35001" ) \
     2>&1 | grep AUTH_FAILED,CRV1)
 echo $OVPN_OUT
@@ -82,6 +85,8 @@ echo "Open this URL in your browser and log in (ctrl + click):"
 echo ""
 echo ""
 echo $URL
+CALL_URL=$(xdg-open $URL)
+echo "${CALL_URL}"
 sleep 1
 wait_file "saml-response.txt" 60 || {
   echo "SAML Authentication timed out"
@@ -97,7 +102,7 @@ echo "Running OpenVPN."
 # Delete saml-response.txt after connect
 exec /openvpn --config /vpn.modified.conf \
               --verb 3 --auth-nocache --inactive 3600 \
-              --proto $PROTO --remote $SRV $PORT \
+              --proto $PROTO --remote $IP_ADDRESS $PORT \
               --script-security 2 \
               --keepalive 10 60 \
               --route-up '/bin/rm saml-response.txt' \
