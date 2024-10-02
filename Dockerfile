@@ -54,8 +54,10 @@ RUN apt-get update && \
     golang-go \
     dnsutils \
     liblzo2-dev \
+    lynx \
     openssl \
-    net-tools
+    net-tools \
+    xdg-utils
 
 COPY --from=builder /openvpn/src/openvpn/openvpn /openvpn
 COPY --from=builder /server /server
